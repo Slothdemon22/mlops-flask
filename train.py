@@ -101,10 +101,10 @@ model_dir = f"models/run_{timestamp}"
 os.makedirs(model_dir, exist_ok=True)
 checkpoint_path = os.path.join(model_dir, "best_model.keras")
 
-# Custom MLflow callback to log metrics after each epoch
+# MLflow callback to log metrics after each epoch
 class MlflowEpochLogger(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
-        if logs is not None:
+        if logs:
             mlflow.log_metrics({k: float(v) for k, v in logs.items()}, step=epoch)
 
 callbacks = [
@@ -129,9 +129,19 @@ callbacks = [
 ]
 
 # =========================
-# 🚀 MLflow Setup
+# 🚀 MLflow Setup (DagsHub)
 # =========================
-mlflow.set_experiment("xception_fake_real")
+DAGSHUB_USERNAME = "Slothdemon22"
+DAGSHUB_TOKEN = "a50bc6e3b74b10f5c959b12bce5de638474e7b48"
+REPO_NAME = "mlops-project"
+
+os.environ["MLFLOW_TRACKING_URI"] = f"https://dagshub.com/{DAGSHUB_USERNAME}/{REPO_NAME}.mlflow"
+os.environ["MLFLOW_TRACKING_USERNAME"] = DAGSHUB_USERNAME
+os.environ["MLFLOW_TRACKING_PASSWORD"] = DAGSHUB_TOKEN
+
+# Create a unique experiment per run
+experiment_name = f"xception_run_{timestamp}"
+mlflow.set_experiment(experiment_name)
 
 with mlflow.start_run() as run:
     # Log hyperparameters
@@ -147,7 +157,7 @@ with mlflow.start_run() as run:
         "label_smoothing": LABEL_SMOOTHING,
         "fine_tune_last_layers": FINE_TUNE_LAST_LAYERS
     })
-    
+
     # =========================
     # 🚀 Train Phase 1
     # =========================
@@ -157,7 +167,7 @@ with mlflow.start_run() as run:
         epochs=EPOCHS_PHASE1,
         callbacks=callbacks
     )
-    
+
     # =========================
     # 🔓 Fine-tuning Phase 2
     # =========================
@@ -177,23 +187,23 @@ with mlflow.start_run() as run:
         epochs=EPOCHS_PHASE2,
         callbacks=callbacks
     )
-    
+
     # =========================
     # 💾 Save final model locally
     # =========================
     final_model_path = os.path.join(model_dir, "final_model.keras")
     model.save(final_model_path)
     print(f"✅ Model saved → {final_model_path}")
-    
+
     # =========================
-    # 📊 Log final metrics
+    # 📊 Log final validation metrics
     # =========================
     val_loss, val_acc = model.evaluate(val_ds)
     mlflow.log_metrics({
         "final_val_loss": float(val_loss),
         "final_val_accuracy": float(val_acc)
     })
-    
-    print(f"✅ MLflow run completed: {run.info.run_id}")
-    print(f"🎉 MLflow run URL (your tracking server): {run.info.run_id}")
 
+    print(f"✅ MLflow run completed: {run.info.run_id}")
+    print(f"🎉 MLflow experiment: {experiment_name}")
+    print(f"📊 Run URL (DagsHub MLflow): https://dagshub.com/{DAGSHUB_USERNAME}/{REPO_NAME}.mlflow/#/experiments/{experiment_name}/runs/{run.info.run_id}")
