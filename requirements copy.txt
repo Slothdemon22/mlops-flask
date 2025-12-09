@@ -1,0 +1,20 @@
+# Core ML
+tensorflow>=2.14
+keras>=2.14
+
+# ML experiment tracking
+mlflow>=2.6
+
+# Image processing and data handling
+numpy>=1.25
+pandas>=2.1
+opencv-python>=4.8
+
+# DVC for pipeline management
+dvc[s3]>=2.40
+
+# Optional: progress bars / logging
+tqdm>=4.66
+
+# For plotting metrics if needed
+matplotlib>=3.8

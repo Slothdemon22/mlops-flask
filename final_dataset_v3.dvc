@@ -1,0 +1,6 @@
+outs:
+- md5: fe4344841a33672f4d155112ef75aa44.dir
+  size: 947692886
+  nfiles: 39908
+  hash: md5
+  path: final_dataset_v3
