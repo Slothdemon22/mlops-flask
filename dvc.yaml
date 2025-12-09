@@ -1,0 +1,25 @@
+stages:
+  preprocess:
+    cmd: python preprocess.py
+    deps:
+      - preprocess.py
+      - final_dataset_v3
+    outs:
+      - data_processed
+
+  train:
+    cmd: python train.py
+    deps:
+      - train.py
+      - data_processed
+    outs:
+      - models
+
+  # evaluate:
+  #   cmd: python evaluate.py
+  #   deps:
+  #     - evaluate.py
+  #     - models
+  #     - data_processed
+  #   outs:
+  #     - metrics.json
