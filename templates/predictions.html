@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictions History | AI Detector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #0a0a0a;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-card {
+            background: #141414;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #262626;
+            margin-bottom: 24px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: #fff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo svg {
+            width: 24px;
+            height: 24px;
+            fill: #0a0a0a;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            display: inline-block;
+            color: #a3a3a3;
+            font-size: 0.85rem;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: #1a1a1a;
+            border: 1px solid #262626;
+            border-radius: 10px;
+            padding: 16px 20px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .stat-label {
+            color: #737373;
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .predictions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .prediction-card {
+            background: #141414;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #262626;
+            transition: all 0.2s;
+        }
+
+        .prediction-card:hover {
+            border-color: #404040;
+            transform: translateY(-2px);
+        }
+
+        .prediction-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .prediction-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .prediction-badge.fake {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
+
+        .prediction-badge.real {
+            background: #14532d;
+            color: #bbf7d0;
+        }
+
+        .prediction-badge svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        .tag-badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: #262626;
+            color: #a3a3a3;
+        }
+
+        .tag-badge.image {
+            background: #1e3a5f;
+            color: #93c5fd;
+        }
+
+        .tag-badge.video {
+            background: #4c1d4f;
+            color: #f9a8d4;
+        }
+
+        .filename {
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 6px;
+            background: #262626;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .confidence-fill.fake {
+            background: #ef4444;
+        }
+
+        .confidence-fill.real {
+            background: #22c55e;
+        }
+
+        .confidence-text {
+            color: #737373;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+        }
+
+        .timestamp {
+            color: #525252;
+            font-size: 0.75rem;
+        }
+
+        .frames-info {
+            color: #737373;
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: #141414;
+            border-radius: 12px;
+            border: 1px solid #262626;
+        }
+
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            fill: #404040;
+            margin-bottom: 16px;
+        }
+
+        .empty-state h2 {
+            color: #737373;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: #525252;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .predictions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-card">
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                        </svg>
+                    </div>
+                    <h1>Predictions History</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="/" class="nav-link">Image Detection</a>
+                    <a href="/video" class="nav-link">Video Detection</a>
+                </div>
+            </div>
+
+            {% if predictions %}
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Total Predictions</div>
+                    <div class="stat-value">{{ predictions|length }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Images</div>
+                    <div class="stat-value">{{ predictions|selectattr('tag', 'equalto', 'image')|list|length }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Videos</div>
+                    <div class="stat-value">{{ predictions|selectattr('tag', 'equalto', 'video')|list|length }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Fake Detections</div>
+                    <div class="stat-value">{{ predictions|selectattr('prediction', 'equalto', 'fake')|list|length }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Real Detections</div>
+                    <div class="stat-value">{{ predictions|selectattr('prediction', 'equalto', 'real')|list|length }}</div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if predictions %}
+        <div class="predictions-grid">
+            {% for pred in predictions %}
+            <div class="prediction-card">
+                <div class="prediction-header">
+                    <div class="prediction-badge {{ pred.prediction }}">
+                        {% if pred.prediction == 'fake' %}
+                        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                        {% else %}
+                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                        {% endif %}
+                        {{ pred.prediction|title }}
+                    </div>
+                    <span class="tag-badge {{ pred.tag }}">{{ pred.tag|title }}</span>
+                </div>
+
+                <div class="filename">{{ pred.filename }}</div>
+
+                <div class="confidence-bar">
+                    <div class="confidence-fill {{ pred.prediction }}" style="width: {{ pred.confidence }}%;"></div>
+                </div>
+                <div class="confidence-text">Confidence: {{ pred.confidence }}%</div>
+
+                {% if pred.frames_analyzed %}
+                <div class="frames-info">Frames analyzed: {{ pred.frames_analyzed }}</div>
+                {% endif %}
+
+                <div class="timestamp">{{ pred.timestamp }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+            <h2>No predictions yet</h2>
+            <p>Start analyzing images or videos to see predictions here</p>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

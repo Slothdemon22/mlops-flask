@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret123
+      MONGO_INITDB_DATABASE: predictions_db
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - app_network
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+
+networks:
+  app_network:
+    driver: bridge

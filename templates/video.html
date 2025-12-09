@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Detector | Fake vs Real</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .card {
+            background: #141414;
+            border-radius: 16px;
+            padding: 32px;
+            border: 1px solid #262626;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: #fff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .logo svg {
+            width: 24px;
+            height: 24px;
+            fill: #0a0a0a;
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #737373;
+            font-size: 0.875rem;
+        }
+
+        .nav-link {
+            display: inline-block;
+            color: #a3a3a3;
+            font-size: 0.8rem;
+            text-decoration: none;
+            margin-top: 12px;
+            padding: 6px 12px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            border-color: #fff;
+        }
+
+        .upload-zone {
+            border: 1px dashed #404040;
+            border-radius: 12px;
+            padding: 32px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #fff;
+            background: #1f1f1f;
+        }
+
+        .upload-zone svg {
+            width: 40px;
+            height: 40px;
+            fill: #525252;
+            margin-bottom: 12px;
+        }
+
+        .upload-zone p {
+            color: #a3a3a3;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .upload-zone span {
+            color: #525252;
+            font-size: 0.8rem;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-name {
+            color: #22c55e;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .file-name.visible {
+            display: block;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: #fff;
+            color: #0a0a0a;
+        }
+
+        .btn-primary:hover {
+            background: #e5e5e5;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Result Section */
+        .result-section {
+            margin-top: 24px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #262626;
+        }
+
+        .result-video {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            background: #000;
+        }
+
+        .result-label {
+            text-align: center;
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .result-badge.fake {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
+
+        .result-badge.real {
+            background: #14532d;
+            color: #bbf7d0;
+        }
+
+        .result-badge svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .confidence-bar {
+            width: 100%;
+            height: 6px;
+            background: #262626;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .confidence-fill.fake {
+            background: #ef4444;
+        }
+
+        .confidence-fill.real {
+            background: #22c55e;
+        }
+
+        .confidence-text {
+            color: #737373;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .frames-info {
+            color: #525252;
+            font-size: 0.75rem;
+            margin-top: 6px;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 16px;
+        }
+
+        .loading.visible {
+            display: block;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #262626;
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: #737373;
+            font-size: 0.85rem;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #404040;
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px;
+            }
+            
+            h1 {
+                font-size: 1.25rem;
+            }
+            
+            .upload-zone {
+                padding: 24px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
+                    </svg>
+                </div>
+                <h1>Video Detector</h1>
+                <p class="subtitle">Detect AI-generated videos</p>
+                <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
+                    <a href="/" class="nav-link">← Image Detection</a>
+                    <a href="/predictions" class="nav-link">View History →</a>
+                </div>
+            </div>
+
+            <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                <div class="upload-zone" id="dropZone">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4zM9 16l3-4 3 4H9z"/>
+                    </svg>
+                    <p>Drag & drop a video here</p>
+                    <span>or click to browse (MP4, AVI, MOV)</span>
+                    <input type="file" name="file" id="fileInput" class="file-input" accept="video/*" required>
+                    <p class="file-name" id="fileName"></p>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    Analyze Video
+                </button>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Extracting frames & analyzing...</p>
+                </div>
+            </form>
+
+            {% if filename and prediction %}
+            {% set confidence = prediction.split('(')[1].split('%')[0] | default('0') %}
+            {% set is_fake = 'fake' in prediction.lower() %}
+            <div class="result-section">
+                <div class="result-card">
+                    <video controls class="result-video">
+                        <source src="{{ url_for('static', filename='uploads/' + filename) }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    
+                    <div class="result-label">
+                        {% if is_fake %}
+                        <div class="result-badge fake">
+                            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                            AI Generated
+                        </div>
+                        {% else %}
+                        <div class="result-badge real">
+                            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                            Real Video
+                        </div>
+                        {% endif %}
+                        
+                        <div class="confidence-bar">
+                            <div class="confidence-fill {% if is_fake %}fake{% else %}real{% endif %}" style="width: {{ confidence | float }}%;"></div>
+                        </div>
+                        <p class="confidence-text">Confidence: {{ confidence | float }}%</p>
+                        {% if frames_analyzed %}
+                        <p class="frames-info">Analyzed {{ frames_analyzed }} frames</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="footer">
+                <p>Powered by TensorFlow</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const uploadForm = document.getElementById('uploadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                fileInput.files = files;
+                handleFileSelect(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        function handleFileSelect(file) {
+            fileName.textContent = file.name;
+            fileName.classList.add('visible');
+        }
+
+        uploadForm.addEventListener('submit', () => {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Analyzing...';
+            loading.classList.add('visible');
+        });
+    </script>
+</body>
+</html>
