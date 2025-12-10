@@ -20,4 +20,4 @@ jobs:
           chmod 600 ~/ssh_key
 
           # SSH and run a command using secrets for user and host
-          ssh -i ~/ssh_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "echo 'Hello world from runner!'"
+          ssh -i ~/ssh_key -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.IP }} "echo 'Hello world from runner!'"
