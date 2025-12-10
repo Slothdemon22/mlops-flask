@@ -13,11 +13,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: SSH into server and echo
+      - name: SSH into server and run commands
         run: |
           # Write the SSH private key from secrets
           echo "${{ secrets.BASIL_KEY }}" > ~/ssh_key
           chmod 600 ~/ssh_key
 
-          # SSH and run a command using secrets for user and host
-          ssh -i ~/ssh_key -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.IP }} "echo 'Hello world from runner!'"
+          # SSH and run commands on the server
+          ssh -i ~/ssh_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
+            cd ~/mlops-flask && \
+            source venv/bin/activate && \
+            echo 'Virtual environment activated in mlops-flask!'
+          "
+
+          
