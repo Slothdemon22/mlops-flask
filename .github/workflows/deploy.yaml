@@ -1,28 +1,38 @@
-name: SSH Hello World
+name: SSH Deploy Flask App
 
 on:
   push:
     branches:
-      - main
+      - main  # Trigger on pushes to main
 
 jobs:
-  test-ssh:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: SSH into server and echo
+      - name: SSH into server and deploy
         run: |
-          # Write the SSH private key from secrets
+          # Write SSH private key from secrets
           echo "${{ secrets.BASIL_KEY }}" > ~/ssh_key
           chmod 600 ~/ssh_key
 
-          # SSH and run a command using secrets for user and host
+          # SSH and run deploy commands
           ssh -i ~/ssh_key -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.IP }} "
-            echo 'Hello world from runner!' &&
-            cd ~/mlops-flask &&
-            source venv/bin/activate &&
-            echo 'Virtual environment activated in mlops-flask!'
+            cd ~/mlops-flask && \
+            
+            # Activate Python virtual environment
+            source venv/bin/activate && \
+            
+            # Pull latest code safely
+            git fetch origin && \
+            git reset --hard origin/main && \
+            
+            # Install/update Python dependencies
+            pip install -r requirements.txt && \
+            
+            # Restart PM2 app (or start if not running)
+            pm2 restart flask-app || pm2 start app.py --name flask-app
           "
