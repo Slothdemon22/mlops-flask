@@ -1,0 +1,31 @@
+name: DVC Auto Deploy with PM2
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'final_dataset_v3.dvc' 
+
+jobs:
+  dvc-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: SSH into server and run DVC pipeline with PM2
+        run: |
+          # Write SSH private key from secrets
+          echo "${{ secrets.BASIL_KEY }}" > ~/ssh_key
+          chmod 600 ~/ssh_key
+
+          # SSH and run commands
+          ssh -i ~/ssh_key -o StrictHostKeyChecking=no ${{ secrets.USER }}@${{ secrets.IP }} "
+            cd ~/mlops-flask && \
+            source venv/bin/activate && \
+            
+            # Run the DVC script via PM2
+            pm2 restart run_dvc || pm2 start run_dvc.sh --name run_dvc
+          "
