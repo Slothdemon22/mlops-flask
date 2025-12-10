@@ -1,0 +1,5 @@
+{
+    "loss": 0.2222,
+    "accuracy": 0.8888,
+    "note": "dummy metrics for MongoDB connectivity smoke test"
+}

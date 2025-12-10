@@ -1,12 +1,20 @@
 import tensorflow as tf
 from tensorflow import keras
+from pymongo import MongoClient
+from datetime import datetime, timezone
 import json
 
 # =========================
-# 📁 Paths
+# 📁 Paths & Mongo Config
 # =========================
 test_dir = "data_processed/test"
 model_path = "best_model.keras"
+
+# MongoDB (same creds as app.py, different collection)
+MONGO_URI = "mongodb://admin:secret123@localhost:27017/predictions_db?authSource=admin"
+client = MongoClient(MONGO_URI)
+db = client["predictions_db"]
+eval_collection = db["evaluations"]
 
 # =========================
 # 📦 Load Dataset
@@ -49,3 +57,19 @@ with open("metrics.json", "w") as f:
     json.dump(metrics, f, indent=4)
 
 print("Metrics saved → metrics.json")
+
+# =========================
+# 🗄️ Store in MongoDB
+# =========================
+try:
+    eval_doc = {
+        "collection": "evaluations",
+        "model_path": model_path,
+        "test_dir": test_dir,
+        "metrics": metrics,
+        "timestamp": datetime.now(timezone.utc)
+    }
+    eval_collection.insert_one(eval_doc)
+    print("✅ Evaluation metrics stored in MongoDB (evaluations collection)")
+except Exception as e:
+    print(f"❌ Failed to store metrics in MongoDB: {e}")
