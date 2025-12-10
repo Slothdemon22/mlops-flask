@@ -1,0 +1,23 @@
+name: SSH Hello World
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-ssh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: SSH into server and echo
+        run: |
+          # Write the SSH private key from secrets
+          echo "${{ secrets.BASIL_KEY }}" > ~/ssh_key
+          chmod 600 ~/ssh_key
+
+          # SSH and run a command using secrets for user and host
+          ssh -i ~/ssh_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "echo 'Hello world from runner!'"
