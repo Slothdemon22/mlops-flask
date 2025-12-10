@@ -15,11 +15,11 @@ stages:
     outs:
       - models
 
-  # evaluate:
-  #   cmd: python evaluate.py
-  #   deps:
-  #     - evaluate.py
-  #     - models
-  #     - data_processed
-  #   outs:
-  #     - metrics.json
+  evaluate:
+    cmd: python evaluate.py
+    deps:
+      - evaluate.py
+      - models
+      - data_processed
+    outs:
+      - metrics.json
