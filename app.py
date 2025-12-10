@@ -18,7 +18,7 @@ app.config['UPLOAD_FOLDER'] = 'static/uploads'
 # =========================
 # Load trained model
 # =========================
-MODEL_PATH = 'best_model_v3.keras'
+MODEL_PATH = 'best_model.keras'
 model = load_model(MODEL_PATH)
 print(f"✅ Loaded model from {MODEL_PATH}")
 
