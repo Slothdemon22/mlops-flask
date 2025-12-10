@@ -48,7 +48,7 @@ def main():
     for split in ["train", "val", "test"]:
         process_split(split)
 
-    print("\nPreprocessing complete. Cleaned + resized dataset stored in 'data_processed/'.")
+    print("\nPreprocessing complete. Cleaned + resized dataset stored in 'data_processed/' ")
 
 
 if __name__ == "__main__":
