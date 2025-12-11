@@ -1,0 +1,34 @@
+venv
+__pycache__/
+*.pyc
+*.pyo
+.git
+.gitignore
+.dvc
+.dvcignore
+
+# Large / generated artifacts
+mlruns/
+mlflow.db
+static/uploads/
+*.db
+*.sqlite
+*.sqlite3
+*.log
+*.tmp
+*.swp
+metrics*.json
+
+# Datasets / models (tracked via DVC or external)
+final_dataset_v3*
+*.keras
+*.h5
+*.pb
+temp_final_model/
+best_model_v3.keras
+
+# IDE / OS
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db

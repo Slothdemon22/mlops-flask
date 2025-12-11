@@ -68,23 +68,6 @@
             font-size: 0.875rem;
         }
 
-        .nav-link {
-            display: inline-block;
-            color: #a3a3a3;
-            font-size: 0.8rem;
-            text-decoration: none;
-            margin-top: 12px;
-            padding: 6px 12px;
-            border: 1px solid #333;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .nav-link:hover {
-            color: #fff;
-            border-color: #fff;
-        }
-
         .upload-zone {
             border: 1px dashed #404040;
             border-radius: 12px;
@@ -323,12 +306,8 @@
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                     </svg>
                 </div>
-                <h1>AI Image Detector</h1>
+                <h1>AI Image Detector Detection</h1>
                 <p class="subtitle">Detect AI-generated images</p>
-                <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
-                    <a href="/video" class="nav-link">Video Detection →</a>
-                    <a href="/predictions" class="nav-link">View History →</a>
-                </div>
             </div>
 
             <form id="uploadForm" method="POST" enctype="multipart/form-data">
@@ -347,7 +326,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary" id="submitBtn">
-                    Analyze Image skibidi
+                    Analyze Image
                 </button>
 
                 <div class="loading" id="loading">
