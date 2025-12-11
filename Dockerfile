@@ -1,5 +1,5 @@
-# Use full Python 3.11 image (avoids TF issues in slim)
-FROM python:3.11
+# Use full Python image (TensorFlow CPU needs system libs)
+FROM python:3.11-slim
 
 # Set working directory
 WORKDIR /app
@@ -10,7 +10,7 @@ ENV PYTHONUNBUFFERED=1 \
     TF_CPP_MIN_LOG_LEVEL=2
 
 # Install system dependencies required by TensorFlow and Pillow
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     libglib2.0-0 \
     libsm6 \
@@ -26,11 +26,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy app code and templates
 COPY . .
 
-# Copy your Keras model
-COPY best_model_v3.keras ./best_model_v3.keras
+# Copy your Keras model (current name)
+COPY best_model.keras ./best_model.keras
 
-# Expose Flask default port
-EXPOSE 5000
+# Expose Flask port (app.py uses 5001)
+EXPOSE 5001
 
 # Run Flask app
 CMD ["python", "app.py"]
